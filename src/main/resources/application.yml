@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: olx-code-challenge
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/olx_ads}
+    username: ${SPRING_DATASOURCE_USERNAME:olx_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:olx_password}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+moderation:
+  base-url: ${MODERATION_BASE_URL:http://localhost:8787}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
