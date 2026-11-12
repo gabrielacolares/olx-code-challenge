@@ -65,17 +65,14 @@ class AdsControllerTest {
 
     @Test
     void deveCriarAnuncioValidoERetornar201() {
-        // Arrange
         AdsRequest request = criarRequisicaoValida();
 
-        // Act
         var resposta = given()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(request))
         .when()
                 .post("/api/ads");
 
-        // Assert
         resposta.then()
                 .statusCode(201)
                 .body("id", notNullValue())
@@ -88,7 +85,6 @@ class AdsControllerTest {
 
     @Test
     void deveRetornar400QuandoOsCamposForemInvalidosOuNulos() {
-        // Arrange
         AdsRequest request = new AdsRequest();
         request.setTitle(" ");
         request.setDescription(null);
@@ -96,14 +92,12 @@ class AdsControllerTest {
         request.setCategory(null);
         request.setImages(null);
 
-        // Act
         var resposta = given()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(request))
         .when()
                 .post("/api/ads");
 
-        // Assert
         resposta.then()
                 .statusCode(400)
                 .body("error", equalTo("Requisição inválida"))

@@ -61,3 +61,11 @@ POST http://localhost:8080/api/ads
       }'
 
 O anúncio é enviado ao serviço de moderação antes de ser salvo. A resposta é 201 Created e contém o status e, quando reprovado, o motivo. Dados inválidos retornam 400; falhas do serviço de moderação retornam 502.
+## Consultar anúncio
+
+GET http://localhost:8080/api/ads/{id}
+
+Informe o UUID do anúncio no caminho. A API retorna `200 OK` com os dados do anúncio, `404 Not Found` quando não existe e `400 Bad Request` quando o UUID é inválido.
+
+    curl -i http://localhost:8080/api/ads/00000000-0000-0000-0000-000000000001
+

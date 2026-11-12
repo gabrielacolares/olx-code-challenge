@@ -11,6 +11,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,6 +94,33 @@ class AdsServiceTest {
 
         verify(moderation).moderate(anyString(), anyString(), any(), anyString());
         verifyNoInteractions(repository);
+    }
+
+    @Test
+    void findsAdById() {
+        UUID id = UUID.fromString("bb885686-0612-4d32-b8db-2d3dd519c2fd");
+        Ads expected = new Ads(id, "Bicicleta urbana aro 29", "Em ótimo estado",
+                new BigDecimal("850.00"), "esportes", validImages(), AdsStatus.APPROVED, null);
+        when(repository.findById(id)).thenReturn(Optional.of(expected));
+
+        Optional<Ads> result = service.findById(id);
+
+        assertTrue(result.isPresent());
+        assertSame(expected, result.orElseThrow());
+        verify(repository).findById(id);
+        verifyNoInteractions(moderation);
+    }
+
+    @Test
+    void returnsEmptyWhenAdIdDoesNotExist() {
+        UUID id = UUID.fromString("5a597312-ce13-4f9c-a091-742878ac45a9");
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        Optional<Ads> result = service.findById(id);
+
+        assertTrue(result.isEmpty());
+        verify(repository).findById(id);
+        verifyNoInteractions(moderation);
     }
 
     private Ads createValidAds() {

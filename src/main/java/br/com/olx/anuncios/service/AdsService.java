@@ -18,6 +18,9 @@ public class AdsService {
 
     @Autowired
     private ModerationClient moderationClient;
+    public Optional<Ads> findById(UUID id) {
+        return adsRepository.findById(id);
+    }
 
     public Ads create(String title, String description, BigDecimal price, String category, List<String> images) {
         Ads ads = new Ads(UUID.randomUUID(), title, description, price, category, images);
