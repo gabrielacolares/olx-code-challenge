@@ -1,6 +1,7 @@
 package br.com.olx.anuncios.dto;
 
 import br.com.olx.anuncios.model.AdsStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
+@Schema(description = "Anuncio retornado pela API")
 public class AdsResponse {
     private final UUID id;
     private final String title;
