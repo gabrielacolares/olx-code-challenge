@@ -69,3 +69,10 @@ Informe o UUID do anúncio no caminho. A API retorna `200 OK` com os dados do an
 
     curl -i http://localhost:8080/api/ads/00000000-0000-0000-0000-000000000001
 
+## Listagem de anuncios
+
+GET http://localhost:8080/api/ads
+
+A listagem aceita page (base zero, padrao 0), size (padrao 20, de 1 a 100) e category (filtro opcional, sem diferenciar maiusculas de minusculas). A ordenacao e por UUID crescente. A resposta inclui items, page, size, totalItems e totalPages. Parametros invalidos retornam 400.
+
+    curl -i 'http://localhost:8080/api/ads?page=0&size=20&category=esportes'
