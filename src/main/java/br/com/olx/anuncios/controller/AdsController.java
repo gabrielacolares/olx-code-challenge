@@ -45,13 +45,16 @@ public class AdsController {
     })
     @PostMapping
     public ResponseEntity<AdsResponse> create(@Valid @RequestBody AdsRequest request) {
+
         Ads createdAds = adsService.create(
                 request.getTitle(),
                 request.getDescription(),
                 request.getPrice(),
                 request.getCategory(),
                 request.getImages());
+
         AdsResponse response = adsResponseMapper.toResponse(createdAds);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -63,12 +66,15 @@ public class AdsController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<AdsResponse> getById(@Parameter(description = "UUID do anuncio", example = "00000000-0000-0000-0000-000000000001") @PathVariable UUID id) {
+
         Optional<Ads> result = adsService.findById(id);
+
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         AdsResponse response = adsResponseMapper.toResponse(result.get());
+
         return ResponseEntity.ok(response);
     }
 
@@ -85,6 +91,7 @@ public class AdsController {
 
         AdsPage result = adsService.list(page, size, category);
         AdsPageResponse response = adsResponseMapper.toPageResponse(result);
+
         return ResponseEntity.ok(response);
     }
 }

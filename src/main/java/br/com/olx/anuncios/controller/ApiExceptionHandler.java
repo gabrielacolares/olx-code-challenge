@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
     @ExceptionHandler({IllegalArgumentException.class, HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse badsRequest(Exception exception) {
         return new ErrorResponse("Requisição inválida", exception.getMessage());
+
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,6 +36,7 @@ public class ApiExceptionHandler {
     }
 
     public static class ErrorResponse {
+
         private final String error;
         private final String message;
 
@@ -43,6 +46,7 @@ public class ApiExceptionHandler {
         }
 
         public String getError() { return error; }
+
         public String getMessage() { return message; }
     }
 }

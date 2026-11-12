@@ -40,7 +40,7 @@ Depois, em outro terminal na raiz do projeto:
 
     mvn spring-boot:run
 
-A configuração local conecta ao PostgreSQL em `localhost:5432` e ao mock em `localhost:8787`. O perfil de testes continua usando H2 em memória, sem exigir serviços externos.
+A configuração local conecta ao PostgreSQL em `localhost:5432` e ao mock em `localhost:8787`. O perfil de testes utiliza H2 em memória.
 
 Para encerrar o PostgreSQL e o mock:
 
@@ -73,16 +73,16 @@ Informe o UUID do anúncio no caminho. A API retorna `200 OK` com os dados do an
 
 GET http://localhost:8080/api/ads
 
-A listagem aceita page (base zero, padrao 0), size (padrao 20, de 1 a 100) e category (filtro opcional, sem diferenciar maiusculas de minusculas). A ordenacao e por UUID crescente. A resposta inclui items, page, size, totalItems e totalPages. Parametros invalidos retornam 400.
+A listagem aceita page (base zero, padrão 0), size (padrão 20, de 1 a 100) e category (filtro opcional, sem diferenciar maiúsculas de minúsculas). A ordenação e por UUID crescente. A resposta inclui ‘items’, page, size, totalItems e totalPages. Parâmetros inválidos retornam 400.
 
     curl -i 'http://localhost:8080/api/ads?page=0&size=20&category=esportes'
 
 
 ## Documentacao interativa da API
 
-Com a aplicacao iniciada (por exemplo, com docker compose up --build), acesse:
+Com a aplicação iniciada (por exemplo, com docker compose up --build), acesse:
 
 - Swagger UI: http://localhost:8080/swagger-ui/index.html
-- Especificacao OpenAPI em JSON: http://localhost:8080/v3/api-docs
+- Especificação OpenAPI em JSON: http://localhost:8080/v3/api-docs
 
-A documentacao descreve os endpoints de criacao, consulta por UUID e listagem paginada, incluindo validacoes e respostas de erro.
+A documentação descreve os endpoints de criação, consulta por UUID e listagem paginada, incluindo validações e respostas de erro.

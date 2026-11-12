@@ -10,10 +10,13 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AdsResponseMapper {
+
     AdsResponse toResponse(Ads ads);
 
     default AdsPageResponse toPageResponse(AdsPage adsPage) {
-        List<AdsResponse> items = adsPage.getAds().stream()
+
+        List<AdsResponse> items = adsPage.getAdsList()
+                .stream()
                 .map(this::toResponse)
                 .toList();
 
@@ -23,6 +26,7 @@ public interface AdsResponseMapper {
                 adsPage.getSize(),
                 adsPage.getTotalItems(),
                 adsPage.getTotalPages());
+
         return response;
     }
 }

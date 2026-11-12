@@ -17,6 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 class AdsServiceTest {
     private AdsRepository repository;
@@ -34,7 +35,7 @@ class AdsServiceTest {
 
     @Test
     void createsAndPersistsApprovedAds() {
-        when(moderation.moderate(anyString(), anyString(), any(), anyString()))
+        when(moderation.moderate(any(UUID.class), anyString(), anyString(), any(), anyString()))
                 .thenReturn(new ModerationDecision(AdsStatus.APPROVED, null));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -42,14 +43,14 @@ class AdsServiceTest {
 
         assertEquals(AdsStatus.APPROVED, ads.getStatus());
         assertNull(ads.getRejectionReason());
-        verify(moderation).moderate("Bicicleta urbana aro 29", "Bicicleta em \u00f3timo estado",
-                new BigDecimal("850.00"), "esportes");
+        verify(moderation).moderate(any(UUID.class), eq("Bicicleta urbana aro 29"), eq("Bicicleta em \u00f3timo estado"),
+                eq(new BigDecimal("850.00")), eq("esportes"));
         verify(repository).save(ads);
     }
 
     @Test
     void createsAndPersistsRejectedAdsWithReason() {
-        when(moderation.moderate(anyString(), anyString(), any(), anyString())).thenReturn(
+        when(moderation.moderate(any(UUID.class), anyString(), anyString(), any(), anyString())).thenReturn(
                 new ModerationDecision(AdsStatus.REJECTED, "prohibited_item"));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -87,12 +88,12 @@ class AdsServiceTest {
 
     @Test
     void doesNotPersistWhenModerationFails() {
-        when(moderation.moderate(anyString(), anyString(), any(), anyString()))
+        when(moderation.moderate(any(UUID.class), anyString(), anyString(), any(), anyString()))
                 .thenThrow(new IllegalStateException("servi\u00e7o indispon\u00edvel"));
 
         assertThrows(IllegalStateException.class, this::createValidAds);
 
-        verify(moderation).moderate(anyString(), anyString(), any(), anyString());
+        verify(moderation).moderate(any(UUID.class), anyString(), anyString(), any(), anyString());
         verifyNoInteractions(repository);
     }
 

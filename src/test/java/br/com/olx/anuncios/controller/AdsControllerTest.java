@@ -19,6 +19,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyString;
@@ -54,7 +55,7 @@ class AdsControllerTest {
         RestAssured.baseURI = "http://[::1]";
         RestAssured.port = port;
         adsRepository.deleteAll();
-        when(moderationClient.moderate(anyString(), anyString(), any(), anyString()))
+        when(moderationClient.moderate(any(UUID.class), anyString(), anyString(), any(), anyString()))
                 .thenReturn(new ModerationDecision(AdsStatus.APPROVED, null));
     }
 
