@@ -16,24 +16,30 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "Dados para criar um anuncio")
+@Schema(description = "Dados para criar um anúncio")
 public class AdsRequest {
     @NotBlank
     @Size(min = 10, max = 100)
-    @Schema(description = "Titulo entre 10 e 100 caracteres", example = "Bicicleta urbana aro 29")
+    @Schema(description = "Título entre 10 e 100 caracteres", example = "Bicicleta urbana aro 29")
     private String title;
 
     @NotBlank
-    @Schema(description = "Descricao do anuncio", example = "Bicicleta em otimo estado")
+    @Schema(description = "Descrição do anúncio", example = "Bicicleta em ótimo estado")
     private String description;
 
     @NotNull
     @DecimalMin(value = "0", inclusive = false)
-    @Schema(description = "Preco maior que zero", example = "850.00", minimum = "0.01")
+    @Schema(description = "Preço maior que zero", example = "850.00", minimum = "0.01")
     private BigDecimal price;
 
     @NotBlank
-    @Schema(description = "Categoria do anuncio", example = "esportes")
+    @Pattern(
+            regexp = "^(eletronicos|moveis|veiculos|imoveis|esportes|colecionaveis)$",
+            message = "categoria deve ser uma das categorias permitidas")
+    @Schema(
+            description = "Categoria do anúncio",
+            example = "esportes",
+            allowableValues = {"eletronicos", "moveis", "veiculos", "imoveis", "esportes", "colecionaveis"})
     private String category;
 
     @NotEmpty

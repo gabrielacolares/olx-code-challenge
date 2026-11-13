@@ -53,9 +53,16 @@ public class ModerationClient {
 
         return switch (response.getStatus().toUpperCase(Locale.ROOT)) {
             case "APPROVED" -> new ModerationDecision(AdsStatus.APPROVED, null);
-            case "REJECTED" -> new ModerationDecision(AdsStatus.REJECTED, response.getReason());
+            case "REJECTED" -> rejectedDecision(response.getReason(), adsId, startedAt);
             default -> throw invalidResponse(adsId, startedAt, "Status desconhecido recebido do serviço de moderação");
         };
+    }
+
+    private ModerationDecision rejectedDecision(String reason, UUID adsId, long startedAt) {
+        if (reason == null || reason.isBlank()) {
+            throw invalidResponse(adsId, startedAt, "Motivo de reprovação ausente na resposta do serviço de moderação");
+        }
+        return new ModerationDecision(AdsStatus.REJECTED, reason);
     }
 
     private ModerationIntegrationException invalidResponse(UUID adsId, long startedAt, String message) {

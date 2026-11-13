@@ -36,9 +36,14 @@ public class AdsController {
     @Autowired
     private AdsResponseMapper adsResponseMapper;
 
-    @Operation(summary = "Criar anúncio", description = "Valida e envia o anúncio para moderação antes de persistir.")
+    @Operation(
+            summary = "Criar anúncio",
+            description =
+                    "Envia o anúncio para moderação e persiste o resultado. Retorna 201 para anúncios aprovados ou reprovados.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Anúncio criado e moderado"),
+        @ApiResponse(
+                responseCode = "201",
+                description = "Anúncio persistido com status aprovado ou reprovado; inclui o motivo quando reprovado"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos"),
         @ApiResponse(responseCode = "502", description = "Serviço de moderação indisponível ou resposta invalida")
     })

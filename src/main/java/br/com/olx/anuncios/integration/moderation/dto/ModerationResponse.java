@@ -1,6 +1,6 @@
 package br.com.olx.anuncios.integration.moderation.dto;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,13 +11,6 @@ import lombok.Setter;
 public class ModerationResponse {
     private String status;
 
-    @Getter(AccessLevel.NONE)
+    @JsonAlias("rejection_reason")
     private String reason;
-
-    @Getter(AccessLevel.NONE)
-    private String rejectionReason;
-
-    public String getReason() {
-        return reason != null ? reason : rejectionReason;
-    }
 }

@@ -81,7 +81,6 @@ public class Ads {
         this.rejectionReason = rejectionReason;
 
         validate();
-        validateModerationDecision();
     }
 
     @PrePersist
@@ -127,19 +126,5 @@ public class Ads {
     public void applyModerationDecision(AdsStatus status, String rejectionReason) {
         this.status = status;
         this.rejectionReason = rejectionReason;
-
-        validateModerationDecision();
-    }
-
-    private void validateModerationDecision() {
-        Objects.requireNonNull(status, "status é obrigatório");
-
-        if (status == AdsStatus.APPROVED && rejectionReason != null) {
-            throw new IllegalArgumentException("anúncio aprovado não pode ter motivo de reprovação");
-        }
-
-        if (status == AdsStatus.REJECTED && (rejectionReason == null || rejectionReason.isBlank())) {
-            throw new IllegalArgumentException("anúncio reprovado deve ter motivo de reprovação");
-        }
     }
 }

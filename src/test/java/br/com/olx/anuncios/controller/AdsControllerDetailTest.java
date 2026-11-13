@@ -89,6 +89,6 @@ class AdsControllerDetailTest {
     void returns400WhenIdIsNotAValidUuid() throws Exception {
         mockMvc.perform(get("/api/ads/{id}", "invalid-id"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Requisição inválida"));
+                .andExpect(jsonPath("$.error").value("bad_request"));
     }
 }

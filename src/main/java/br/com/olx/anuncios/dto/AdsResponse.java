@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Schema(description = "Anuncio retornado pela API")
+@Schema(description = "Anúncio retornado pela API")
 public class AdsResponse {
     private final UUID id;
     private final String title;
