@@ -10,8 +10,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +53,9 @@ public class Ads {
     @Column(length = 100)
     private String rejectionReason;
 
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
     protected Ads() {}
 
     public Ads(UUID id, String title, String description, BigDecimal price, String category, List<String> images) {
@@ -77,6 +82,13 @@ public class Ads {
 
         validate();
         validateModerationDecision();
+    }
+
+    @PrePersist
+    private void setCreatedAtOnInsert() {
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
     }
 
     public void validate() {
