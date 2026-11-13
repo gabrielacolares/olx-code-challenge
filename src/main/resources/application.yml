@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: olx-code-challenge
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/olx_ads}
+    username: ${SPRING_DATASOURCE_USERNAME:olx_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:olx_password}
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+moderation:
+  base-url: ${MODERATION_BASE_URL:http://localhost:8787}
+  http:
+    connect-timeout: ${MODERATION_CONNECT_TIMEOUT:2s}
+    response-timeout: ${MODERATION_RESPONSE_TIMEOUT:10s}
+resilience4j:
+  retry:
+    instances:
+      moderation:
+        max-attempts: 3
+        wait-duration: 0
+        retry-exceptions:
+          - 'org.springframework.web.client.HttpClientErrorException$TooManyRequests'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
