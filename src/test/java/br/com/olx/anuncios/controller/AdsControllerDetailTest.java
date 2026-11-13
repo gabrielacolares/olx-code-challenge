@@ -23,15 +23,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class AdsControllerDetailTest {
-    private static final String TITLE = "Bicicleta urbana aro 29";
-    private static final String DESCRIPTION = "Bicicleta em ótimo estado";
+    private static final String TITLE = "Urban bicycle, 29-inch wheels";
+    private static final String DESCRIPTION = "Bicycle in great condition";
     private static final String IMAGE_URL = "https://img.test/bicicleta.jpg";
 
     private AdsService adsService;
     private MockMvc mockMvc;
 
     @BeforeEach
-    void prepararController() {
+    void setUpController() {
         adsService = mock(AdsService.class);
 
         AdsController controller = new AdsController();
@@ -45,10 +45,10 @@ class AdsControllerDetailTest {
     }
 
     @Test
-    void deveRetornar200EAnuncioQuandoEncontrado() throws Exception {
+    void returns200AndAdWhenFound() throws Exception {
         UUID id = UUID.fromString("bb885686-0612-4d32-b8db-2d3dd519c2fd");
 
-        Ads anuncio = new Ads(
+        Ads ad = new Ads(
                 id,
                 TITLE,
                 DESCRIPTION,
@@ -58,7 +58,7 @@ class AdsControllerDetailTest {
                 AdsStatus.REJECTED,
                 "prohibited_item");
 
-        when(adsService.findById(id)).thenReturn(Optional.of(anuncio));
+        when(adsService.findById(id)).thenReturn(Optional.of(ad));
 
         mockMvc.perform(get("/api/ads/{id}", id))
                 .andExpect(status().isOk())
@@ -75,7 +75,7 @@ class AdsControllerDetailTest {
     }
 
     @Test
-    void deveRetornar404QuandoAnuncioNaoExistir() throws Exception {
+    void returns404WhenAdDoesNotExist() throws Exception {
         UUID id = UUID.fromString("5a597312-ce13-4f9c-a091-742878ac45a9");
 
         when(adsService.findById(id)).thenReturn(Optional.empty());
@@ -86,8 +86,8 @@ class AdsControllerDetailTest {
     }
 
     @Test
-    void deveRetornar400QuandoIdNaoForUuidValido() throws Exception {
-        mockMvc.perform(get("/api/ads/{id}", "id-invalido"))
+    void returns400WhenIdIsNotAValidUuid() throws Exception {
+        mockMvc.perform(get("/api/ads/{id}", "invalid-id"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Requisição inválida"));
     }

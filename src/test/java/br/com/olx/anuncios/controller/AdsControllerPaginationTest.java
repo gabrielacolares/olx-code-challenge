@@ -27,7 +27,7 @@ class AdsControllerPaginationTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    void prepararController() {
+    void setUpController() {
         adsService = mock(AdsService.class);
 
         AdsController controller = new AdsController();
@@ -41,15 +41,15 @@ class AdsControllerPaginationTest {
     }
 
     @Test
-    void deveUsarParametrosPadraoEExibirMetadados() throws Exception {
-        Ads anuncio = anuncio(1, "esportes");
+    void usesDefaultParametersAndReturnsPaginationMetadata() throws Exception {
+        Ads ad = ad(1, "esportes");
 
-        when(adsService.list(0, 20, null)).thenReturn(new AdsPage(List.of(anuncio), 0, 20, 1, 1));
+        when(adsService.list(0, 20, null)).thenReturn(new AdsPage(List.of(ad), 0, 20, 1, 1));
 
         mockMvc.perform(get("/api/ads"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.items[0].id").value(anuncio.getId().toString()))
-                .andExpect(jsonPath("$.items[0].title").value(anuncio.getTitle()))
+                .andExpect(jsonPath("$.items[0].id").value(ad.getId().toString()))
+                .andExpect(jsonPath("$.items[0].title").value(ad.getTitle()))
                 .andExpect(jsonPath("$.items[0].images[0]").value("https://img.test/ad.jpg"))
                 .andExpect(jsonPath("$.items[0].status").value("APPROVED"))
                 .andExpect(jsonPath("$.page").value(0))
@@ -61,10 +61,10 @@ class AdsControllerPaginationTest {
     }
 
     @Test
-    void deveUsarParametrosExplicitosEFiltrarCategoria() throws Exception {
-        Ads anuncio = anuncio(2, "esportes");
+    void usesExplicitParametersAndFiltersByCategory() throws Exception {
+        Ads ad = ad(2, "esportes");
 
-        when(adsService.list(1, 5, "esportes")).thenReturn(new AdsPage(List.of(anuncio), 1, 5, 6, 2));
+        when(adsService.list(1, 5, "esportes")).thenReturn(new AdsPage(List.of(ad), 1, 5, 6, 2));
 
         mockMvc.perform(get("/api/ads").param("page", "1").param("size", "5").param("category", "esportes"))
                 .andExpect(status().isOk())
@@ -78,7 +78,7 @@ class AdsControllerPaginationTest {
     }
 
     @Test
-    void deveRetornar400ParaParametroDePaginacaoInvalido() throws Exception {
+    void returns400ForInvalidPaginationParameters() throws Exception {
         when(adsService.list(-1, 20, null)).thenThrow(new IllegalArgumentException("invalid page"));
 
         mockMvc.perform(get("/api/ads").param("page", "-1"))
@@ -90,13 +90,13 @@ class AdsControllerPaginationTest {
                 .andExpect(jsonPath("$.error").exists());
     }
 
-    private Ads anuncio(int sequence, String category) {
+    private Ads ad(int sequence, String category) {
         UUID id = UUID.fromString(String.format("00000000-0000-0000-0000-%012d", sequence));
 
         return new Ads(
                 id,
-                "Anuncio de teste",
-                "Descricao do anuncio",
+                "Test ad",
+                "Test ad description",
                 new BigDecimal("25.00"),
                 category,
                 List.of("https://img.test/ad.jpg"),

@@ -32,8 +32,8 @@ import tools.jackson.databind.ObjectMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class AdsControllerTest {
-    private static final String TITLE = "Bicicleta urbana aro 29";
-    private static final String DESCRIPTION = "Bicicleta em ótimo estado";
+    private static final String TITLE = "Urban bicycle, 29-inch wheels";
+    private static final String DESCRIPTION = "Bicycle in great condition";
     private static final String CATEGORY = "esportes";
     private static final String IMAGE_URL = "https://img.test/bicicleta.jpg";
 
@@ -50,7 +50,7 @@ class AdsControllerTest {
     private ModerationClient moderationClient;
 
     @BeforeEach
-    void prepararTeste() {
+    void setUp() {
         RestAssured.baseURI = "http://[::1]";
 
         RestAssured.port = port;
@@ -62,20 +62,20 @@ class AdsControllerTest {
     }
 
     @AfterEach
-    void limparConfiguracaoRestAssured() {
+    void resetRestAssuredConfiguration() {
         RestAssured.reset();
     }
 
     @Test
-    void deveCriarAnuncioValidoERetornar201() {
-        AdsRequest request = criarRequisicaoValida();
+    void createsValidAdAndReturns201() {
+        AdsRequest request = validRequest();
 
-        var resposta = given().contentType(ContentType.JSON)
+        var response = given().contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(request))
                 .when()
                 .post("/api/ads");
 
-        resposta.then()
+        response.then()
                 .statusCode(201)
                 .body("id", notNullValue())
                 .body("title", equalTo(TITLE))
@@ -86,7 +86,7 @@ class AdsControllerTest {
     }
 
     @Test
-    void deveRetornar400QuandoOsCamposForemInvalidosOuNulos() {
+    void returns400WhenFieldsAreInvalidOrNull() {
         AdsRequest request = new AdsRequest();
 
         request.setTitle(" ");
@@ -95,19 +95,19 @@ class AdsControllerTest {
         request.setCategory(null);
         request.setImages(null);
 
-        var resposta = given().contentType(ContentType.JSON)
+        var response = given().contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(request))
                 .when()
                 .post("/api/ads");
 
-        resposta.then()
+        response.then()
                 .statusCode(400)
                 .body("error", equalTo("Requisição inválida"))
                 .body("message", notNullValue())
                 .body("message", not(emptyString()));
     }
 
-    private AdsRequest criarRequisicaoValida() {
+    private AdsRequest validRequest() {
         AdsRequest request = new AdsRequest();
 
         request.setTitle(TITLE);
