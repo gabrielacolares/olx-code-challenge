@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class OlxRateLimiterConfigTest {
     @Test
     void configuresModerationLimitAndTimeout() {
-        RateLimiter rateLimiter = new RateLimiterConfig().moderationRateLimiter();
+        RateLimiter rateLimiter = new RateLimiterConfiguration().moderationRateLimiter();
 
         assertEquals(1, rateLimiter.getRateLimiterConfig().getLimitForPeriod());
         assertEquals(Duration.ofMillis(251), rateLimiter.getRateLimiterConfig().getLimitRefreshPeriod());

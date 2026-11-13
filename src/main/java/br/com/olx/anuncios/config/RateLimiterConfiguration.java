@@ -8,10 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RateLimiterConfig {
+public class RateLimiterConfiguration {
     @Bean
     public RateLimiter moderationRateLimiter() {
-
         RateLimiterConfig config = RateLimiterConfig.custom()
                 .limitForPeriod(1)
                 .limitRefreshPeriod(Duration.ofMillis(251))
