@@ -1,27 +1,26 @@
 package br.com.olx.anuncios.controller;
 
-import br.com.olx.anuncios.mapper.AdsResponseMapper;
-import br.com.olx.anuncios.model.Ads;
-import br.com.olx.anuncios.model.AdsStatus;
-import br.com.olx.anuncios.service.AdsService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.mapstruct.factory.Mappers;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import br.com.olx.anuncios.mapper.AdsResponseMapper;
+import br.com.olx.anuncios.model.Ads;
+import br.com.olx.anuncios.model.AdsStatus;
+import br.com.olx.anuncios.service.AdsService;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class AdsControllerDetailTest {
     private static final String TITLE = "Bicicleta urbana aro 29";
@@ -34,9 +33,12 @@ class AdsControllerDetailTest {
     @BeforeEach
     void prepararController() {
         adsService = mock(AdsService.class);
+
         AdsController controller = new AdsController();
+
         ReflectionTestUtils.setField(controller, "adsService", adsService);
         ReflectionTestUtils.setField(controller, "adsResponseMapper", Mappers.getMapper(AdsResponseMapper.class));
+
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new ApiExceptionHandler())
                 .build();
@@ -45,8 +47,17 @@ class AdsControllerDetailTest {
     @Test
     void deveRetornar200EAnuncioQuandoEncontrado() throws Exception {
         UUID id = UUID.fromString("bb885686-0612-4d32-b8db-2d3dd519c2fd");
-        Ads anuncio = new Ads(id, TITLE, DESCRIPTION, new BigDecimal("850.00"), "esportes",
-                List.of(IMAGE_URL), AdsStatus.REJECTED, "prohibited_item");
+
+        Ads anuncio = new Ads(
+                id,
+                TITLE,
+                DESCRIPTION,
+                new BigDecimal("850.00"),
+                "esportes",
+                List.of(IMAGE_URL),
+                AdsStatus.REJECTED,
+                "prohibited_item");
+
         when(adsService.findById(id)).thenReturn(Optional.of(anuncio));
 
         mockMvc.perform(get("/api/ads/{id}", id))
@@ -66,10 +77,10 @@ class AdsControllerDetailTest {
     @Test
     void deveRetornar404QuandoAnuncioNaoExistir() throws Exception {
         UUID id = UUID.fromString("5a597312-ce13-4f9c-a091-742878ac45a9");
+
         when(adsService.findById(id)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/ads/{id}", id))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/ads/{id}", id)).andExpect(status().isNotFound());
 
         verify(adsService).findById(id);
     }

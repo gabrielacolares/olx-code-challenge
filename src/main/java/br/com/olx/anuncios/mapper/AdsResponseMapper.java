@@ -13,5 +13,5 @@ public interface AdsResponseMapper {
     AdsResponse toResponse(Ads ads);
 
     @Mapping(source = "adsList", target = "items")
-    AdsPageResponse toPageResponse (AdsPage adsPage);
+    AdsPageResponse toPageResponse(AdsPage adsPage);
 }

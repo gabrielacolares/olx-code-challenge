@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.Data;
+
 @Data
 @Entity
 @Table(name = "ads")
@@ -50,14 +51,21 @@ public class Ads {
     @Column(length = 100)
     private String rejectionReason;
 
-    protected Ads() {
-    }
+    protected Ads() {}
 
     public Ads(UUID id, String title, String description, BigDecimal price, String category, List<String> images) {
         this(id, title, description, price, category, images, AdsStatus.PENDING, null);
     }
 
-    public Ads(UUID id, String title, String description, BigDecimal price, String category, List<String> images, AdsStatus status, String rejectionReason) {
+    public Ads(
+            UUID id,
+            String title,
+            String description,
+            BigDecimal price,
+            String category,
+            List<String> images,
+            AdsStatus status,
+            String rejectionReason) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -107,7 +115,7 @@ public class Ads {
     public void applyModerationDecision(AdsStatus status, String rejectionReason) {
         this.status = status;
         this.rejectionReason = rejectionReason;
-        
+
         validateModerationDecision();
     }
 

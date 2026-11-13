@@ -1,10 +1,17 @@
 package br.com.olx.anuncios.service;
 
-import br.com.olx.anuncios.integration.ModerationClient;
+import br.com.olx.anuncios.integration.moderation.ModerationClient;
 import br.com.olx.anuncios.model.Ads;
 import br.com.olx.anuncios.model.AdsPage;
 import br.com.olx.anuncios.model.ModerationDecision;
 import br.com.olx.anuncios.repository.AdsRepository;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class AdsService {
@@ -61,8 +60,8 @@ public class AdsService {
 
         List<Ads> orderedAds = ids.stream().map(adsById::get).toList();
 
-        return new AdsPage(orderedAds, result.getNumber(), result.getSize(),
-                result.getTotalElements(), result.getTotalPages());
+        return new AdsPage(
+                orderedAds, result.getNumber(), result.getSize(), result.getTotalElements(), result.getTotalPages());
     }
 
     public Ads create(String title, String description, BigDecimal price, String category, List<String> images) {
@@ -79,8 +78,11 @@ public class AdsService {
 
         } catch (RuntimeException exception) {
 
-            log.error("operation=persist_after_moderation adId={} moderationStatus={} outcome=failure exceptionType={}",
-                    ads.getId(), decision.getStatus(), exception.getClass().getSimpleName());
+            log.error(
+                    "operation=persist_after_moderation adId={} moderationStatus={} outcome=failure exceptionType={}",
+                    ads.getId(),
+                    decision.getStatus(),
+                    exception.getClass().getSimpleName());
 
             throw exception;
         }

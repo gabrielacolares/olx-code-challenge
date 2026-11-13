@@ -1,8 +1,7 @@
 package br.com.olx.anuncios.model;
 
-import lombok.Getter;
-
 import java.util.Objects;
+import lombok.Getter;
 
 @Getter
 public class ModerationDecision {

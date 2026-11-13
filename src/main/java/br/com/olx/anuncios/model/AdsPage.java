@@ -1,7 +1,7 @@
 package br.com.olx.anuncios.model;
 
-import lombok.Getter;
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class AdsPage {

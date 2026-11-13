@@ -75,6 +75,34 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.43.0</version>
+        <configuration>
+          <java>
+            <!-- Padroniza indentação, quebras de linha e linhas em branco -->
+            <palantirJavaFormat>
+              <version>2.71.0</version>
+              <style>PALANTIR</style>
+            </palantirJavaFormat>
+            <!-- Remove imports não utilizados e ordena -->
+            <removeUnusedImports/>
+            <importOrder/>
+            <!-- Garante linha em branco no final do arquivo e remove espaços sobrando -->
+            <trimTrailingWhitespace/>
+            <endWithNewline/>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <!-- Falha o build se o código não estiver formatado (opcional) -->
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

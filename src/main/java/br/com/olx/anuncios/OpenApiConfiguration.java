@@ -9,9 +9,10 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfiguration {
     @Bean
     public OpenAPI adsApi() {
-        return new OpenAPI().info(new Info()
-                .title("API de Anúncios")
-                .description("API REST para criar, consultar e listar anúncios.")
-                .version("1.0.0"));
+        return new OpenAPI()
+                .info(new Info()
+                        .title("API de Anúncios")
+                        .description("API REST para criar, consultar e listar anúncios.")
+                        .version("1.0.0"));
     }
 }
