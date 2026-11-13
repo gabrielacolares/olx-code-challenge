@@ -53,8 +53,10 @@ class ModerationRequestExecutorTest {
     void repeteSomenteAResposta429() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.RETRY_AFTER, "2");
+
         HttpClientErrorException tooManyRequests = HttpClientErrorException.create(
                 HttpStatus.TOO_MANY_REQUESTS, "Too Many Requests", headers, new byte[0], null);
+
         when(moderationApi.check(any(ModerationRequest.class)))
                 .thenThrow(tooManyRequests)
                 .thenReturn(approved());
@@ -67,8 +69,10 @@ class ModerationRequestExecutorTest {
     void esgotaTresTentativasIncluindoATentativaInicial() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.RETRY_AFTER, "1");
+
         HttpClientErrorException tooManyRequests = HttpClientErrorException.create(
                 HttpStatus.TOO_MANY_REQUESTS, "Too Many Requests", headers, new byte[0], null);
+
         when(moderationApi.check(any(ModerationRequest.class))).thenThrow(tooManyRequests);
 
         assertThrows(ModerationIntegrationException.class, this::moderacao);
@@ -79,6 +83,7 @@ class ModerationRequestExecutorTest {
     void erro400NaoGeraRetry() {
         HttpClientErrorException badRequest = HttpClientErrorException.create(
                 HttpStatus.BAD_REQUEST, "Bad Request", HttpHeaders.EMPTY, new byte[0], null);
+
         when(moderationApi.check(any(ModerationRequest.class))).thenThrow(badRequest);
 
         assertThrows(ModerationIntegrationException.class, this::moderacao);
@@ -101,6 +106,7 @@ class ModerationRequestExecutorTest {
     private static ModerationResponse approved() {
         ModerationResponse response = new ModerationResponse();
         response.setStatus("APPROVED");
+
         return response;
     }
 

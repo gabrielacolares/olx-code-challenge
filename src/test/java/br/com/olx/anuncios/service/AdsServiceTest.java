@@ -27,7 +27,9 @@ class AdsServiceTest {
     void setUp() {
         repository = mock(AdsRepository.class);
         moderation = mock(ModerationClient.class);
+
         service = new AdsService();
+
         ReflectionTestUtils.setField(service, "adsRepository", repository);
         ReflectionTestUtils.setField(service, "moderationClient", moderation);
     }

@@ -95,7 +95,7 @@ class AdsControllerPaginationTest {
 
         return new Ads(
                 id,
-                "Test ad",
+                "Test bicycle ad",
                 "Test ad description",
                 new BigDecimal("25.00"),
                 category,
