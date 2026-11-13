@@ -1,4 +1,4 @@
-package br.com.olx.anuncios.integration.dto;
+package br.com.olx.anuncios.integration.moderation.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;

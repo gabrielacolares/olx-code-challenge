@@ -14,6 +14,17 @@ spring:
         format_sql: true
 moderation:
   base-url: ${MODERATION_BASE_URL:http://localhost:8787}
+  http:
+    connect-timeout: ${MODERATION_CONNECT_TIMEOUT:2s}
+    response-timeout: ${MODERATION_RESPONSE_TIMEOUT:10s}
+resilience4j:
+  retry:
+    instances:
+      moderation:
+        max-attempts: 3
+        wait-duration: 0
+        retry-exceptions:
+          - 'org.springframework.web.client.HttpClientErrorException$TooManyRequests'
 management:
   endpoints:
     web:

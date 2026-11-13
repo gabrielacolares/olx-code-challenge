@@ -1,9 +1,8 @@
-package br.com.olx.anuncios.integration.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package br.com.olx.anuncios.integration.moderation.dto;
 
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
