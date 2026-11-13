@@ -53,7 +53,7 @@ Este arquivo registra o uso de ChatGPT/Codex neste projeto. Os textos em **Promp
 - **Resultado revisado:** `ModerationApi` é criada por `HttpServiceProxyFactory`; `ModerationRequestExecutor` mantém `@Retry`; o interceptor aplica rate limit e cooldown e trata `Retry-After`; `ModerationClient` define e restaura o MDC. A assinatura do contrato HTTP não recebe o identificador do anúncio.
 - **Validação registrada:** o código e os testes foram compilados com `mvn -DskipTests test`; os testes não foram executados nessa refatoração.
 
-## Simulações de resiliência em runtime 
+## Simulações de resiliência em runtime
 
 - **Ferramenta:** ChatGPT/Codex.
 - **Prompt** Simule chamadas ao mock e à API para verificar rate limit, retry após `429`, retries esgotados, timeout, concorrência e mock inacessível. Registre status HTTP, duração e logs; diferencie respostas HTTP de falhas de conexão.
@@ -119,3 +119,44 @@ Este arquivo registra o uso de ChatGPT/Codex neste projeto. Os textos em **Promp
 - **Prompt (paráfrase):** Use as dependências de teste existentes para cobrir regras de serviço, contrato HTTP, integração de moderação, migrações e persistência sem substituir a cobertura anterior.
 - **Resultado revisado:** A suíte usa JUnit 5 e `spring-boot-starter-test`, com Mockito para doubles, `@SpringBootTest` para testes com contexto, MockMvc para testes HTTP focados, REST Assured em servidor aleatório para o POST, AssertJ/Hamcrest/JUnit assertions para verificações, H2 para persistência isolada e testes Flyway para a carga de seed. `@ParameterizedTest` cobre conjuntos de categorias, motivos e entradas inválidas.
 - **Validação registrada:** as tecnologias e classes de teste foram conferidas no `pom.xml` e em `src/test/java`. Nenhum teste foi executado ao atualizar este registro.
+## Sugestões de IA rejeitadas ou corrigidas
+
+Os exemplos abaixo registram mudanças de direção feitas durante a revisão. A IA propôs opções; a decisão final foi tomada após comparar o código, o contrato e o comportamento observado.
+
+### Alterar o mock para facilitar o teste
+
+- **Sugestão inicial da IA:** alterar `server.js` para retornar `reason`, exportar funções para testes unitários e adicionar uma suíte Node dentro do mock.
+- **Correção do autor:** o mock deve ser tratado como serviço externo e permanecer inalterado. As mudanças no mock foram revertidas; a compatibilidade foi implementada no DTO da API.
+- **Motivo:** mudar o mock esconderia a divergência em vez de testar o consumidor contra o serviço fornecido. O DTO agora aceita `reason` e `rejection_reason`, e foi incluído um teste para o JSON observado; a execução Maven após a correção ainda está pendente.
+
+### Escolher o status HTTP da criação
+
+- **Sugestão inicial da IA:** afirmar `201 Created` como se fosse exigência do desafio, usando a convenção REST como justificativa.
+- **Correção do autor:** revisar a documentação citada: o `200` descrito é do endpoint externo `POST /v1/moderation/check`; o desafio não fixa o status do endpoint da aplicação.
+- **Resultado:** `201` foi mantido como decisão do contrato de `POST /api/ads`, porque a aplicação persiste um recurso mesmo quando reprovado. O README agora distingue explicitamente os dois endpoints e explica que essa escolha é da aplicação.
+
+### Validar o motivo de reprovação no modelo
+
+- **Sugestão inicial da IA:** tratar motivo obrigatório como invariante do modelo e lançar uma exceção de integração quando essa regra não fosse atendida.
+- **Correção do autor:** questionar se a aplicação deveria transformar uma decisão de negócio do serviço externo em erro de entrada do usuário.
+- **Correção e resultado:** após a revisão do autor, a validação foi removida do modelo. A ausência do motivo é verificada na fronteira `ModerationClient`, onde representa resposta externa incompatível e é convertida em falha de integração (`502`), não em `400`.
+
+### Desserializar `rejection_reason`
+
+- **Sugestão inicial da IA:** adicionar `@JsonAlias("rejection_reason")` ao campo separado `rejectionReason`, mantendo também o campo `reason`.
+- **Correção do autor:** o teste reportou que a decisão ainda chegava sem motivo. O DTO foi simplificado para uma única propriedade `reason` com alias `rejection_reason`.
+- **Motivo:** a propriedade duplicada e o getter que escolhia entre os dois campos não estavam produzindo o valor esperado no teste de desserialização. A correção alinha o alias ao mesmo campo lido pelo cliente.
+
+### Nomes dos testes
+
+- **Sugestão inicial da IA:** alguns testes novos foram nomeados em português.
+- **Correção do autor:** padronizar os nomes dos testes de moderação em inglês, seguindo a convenção solicitada para o projeto.
+- **Resultado:** nomes de testes e helpers em `ModerationRequestExecutorTest` foram traduzidos; nomes, fixtures e contrato funcional foram preservados.
+
+### Corpo de erro para falhas de moderação
+
+- **Sugestão inicial da IA:** retornar `502` com um JSON contendo `moderation_error` e mensagem.
+- **Correção do autor:** a resposta pública deve ser somente o status `502` por enquanto.
+- **Resultado:** o handler retorna `502 Bad Gateway` sem corpo; o teste e o README foram ajustados para esse contrato.
+
+- **Validação após estas correções:** `git diff --check` passou nas mudanças documentais. A suíte Maven não foi executada após o ajuste final do DTO; essa validação continua pendente.

@@ -86,6 +86,19 @@ A aplicação usa SLF4J fornecido pelos starters Spring Boot, sem biblioteca adi
 
 O MDC é suficiente para correlacionar o `adId` durante a chamada síncrona. O projeto não configura tracing distribuído nem propagação de trace ID.
 
-## Formato de resposta do mock
+## Requisitos ambíguos, interpretações e justificativas
 
-A documentação do mock exemplifica o motivo como `reason`; uma chamada manual observou `rejection_reason` para uma resposta `200` com anúncio reprovado. `ModerationResponse` aceita ambos os nomes via `@JsonAlias`, sem modificar o mock. O `200` do mock indica que a moderação foi concluída; a API persiste a decisão e responde `201` conforme seu contrato de criação.
+| Requisito ambíguo ou conflito | Interpretação adotada | Justificativa |
+|---|---|---|
+| O desafio não define o status HTTP do `POST /api/ads`. A documentação do mock define `200` para `POST /v1/moderation/check`. | Nossa API retorna `201 Created` quando persiste o anúncio, aprovado ou reprovado. | `200` é a resposta do serviço externo e significa que a decisão de moderação foi processada. A nossa operação cria e persiste um recurso; a reprovação é um resultado de negócio representado no corpo. |
+| O contrato do mock mostra `reason`, mas sua implementação observada responde com `rejection_reason`. | `ModerationResponse` aceita os dois nomes para a mesma propriedade. O mock não é alterado. | A documentação é a referência do contrato, mas a resposta real também precisa ser consumida. Aceitar ambos mantém compatibilidade sem mudar o serviço externo. |
+| Não fica claro se as faixas de preço devem ser validadas localmente ou pela moderação. | A API valida preço maior que zero e categoria permitida; a moderação externa decide se o preço está dentro da faixa da categoria. | O desafio atribui a decisão de aprovação à API de moderação. Preço positivo fora da faixa é reprovação de negócio, não erro de validação da request. |
+| A documentação mostra `reason` nas reprovações, mas não detalha o que fazer se o motivo vier ausente. | A integração trata `REJECTED` sem motivo como resposta incompatível e retorna `502`, sem corpo. | Essa falha vem do serviço externo; não deve ser apresentada como erro (`400`) da request do usuário. |
+| A lista de categorias não diz se a criação aceita variações de caixa. | A criação exige os nomes documentados em letras minúsculas; o filtro de listagem continua sem diferenciar maiúsculas de minúsculas. | A API e o mock usam os identificadores canônicos das categorias na criação. O filtro de listagem é uma conveniência independente. |
+| O seed fornecido não contém imagens, embora a criação exija ao menos uma imagem. | A migração importa os dados fornecidos sem inventar imagens; anúncios do seed podem ter lista vazia. | Seed é carga de dados existente, não uma request de criação. Preservar os dados de origem evita criar conteúdo artificial. |
+| O limite de cinco chamadas por segundo não especifica comportamento com várias instâncias. | O RateLimiter atual é local ao processo e usa uma cadência conservadora de 251 ms por instância. | É suficiente para a execução de uma instância do desafio. Em escala horizontal, cada instância teria uma cota independente; um limite global exigiria coordenação distribuída, fora do escopo atual. |
+
+## Esforço e próximos passos
+
+- **Tempo aproximado:** 6 a 8 horas, estimativa informada pelo autor; o tempo não foi cronometrado.
+- **Com mais tempo, faria diferente:** começaria a validação da integração com uma chamada real ao mock antes de fechar o DTO, para identificar cedo a diferença entre `reason` documentado e `rejection_reason` observado. Também reservaria uma etapa final para executar `mvn test` após todas as alterações e validar a aplicação com PostgreSQL e o mock reais. Se o serviço fosse executado com várias réplicas, avaliaria um RateLimiter distribuído para compartilhar a cota.
