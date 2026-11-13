@@ -1,7 +1,10 @@
 package br.com.olx.anuncios.model;
 
+import lombok.Getter;
+
 import java.util.Objects;
 
+@Getter
 public class ModerationDecision {
     private final AdsStatus status;
     private final String rejectionReason;
@@ -18,13 +21,5 @@ public class ModerationDecision {
         }
 
         this.rejectionReason = rejectionReason;
-    }
-
-    public AdsStatus getStatus() {
-        return status;
-    }
-
-    public String getRejectionReason() {
-        return rejectionReason;
     }
 }

@@ -86,3 +86,10 @@ Com a aplicação iniciada (por exemplo, com docker compose up --build), acesse:
 - Especificação OpenAPI em JSON: http://localhost:8080/v3/api-docs
 
 A documentação descreve os endpoints de criação, consulta por UUID e listagem paginada, incluindo validações e respostas de erro.
+
+
+## Retry e timeout da moderação
+
+O cliente síncrono da API de moderação usa Resilience4j Retry com até 3 tentativas totais, somente para HTTP 429. Cada nova tentativa aguarda o header `Retry-After`; se ele faltar ou for inválido, o cooldown usa 1 segundo. Enquanto aguarda, a requisição original à API permanece aberta. Erros 400, outras respostas HTTP e timeout não são repetidos.
+
+O cliente HTTP tem timeout de conexão de 2 segundos e timeout de resposta/leitura de 10 segundos. Esses valores podem ser ajustados pelas variáveis `MODERATION_CONNECT_TIMEOUT` e `MODERATION_RESPONSE_TIMEOUT`, usando durações como `2s` ou `500ms`. A URL do mock continua configurável por `MODERATION_BASE_URL`.

@@ -1,10 +1,13 @@
 package br.com.olx.anuncios.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 @Schema(description = "Resultado paginado da listagem de anuncios")
 public class AdsPageResponse {
     private final List<AdsResponse> items;
@@ -12,12 +15,4 @@ public class AdsPageResponse {
     private final int size;
     private final long totalItems;
     private final int totalPages;
-
-    public AdsPageResponse(List<AdsResponse> items, int page, int size, long totalItems, int totalPages) {
-        this.items = List.copyOf(items);
-        this.page = page;
-        this.size = size;
-        this.totalItems = totalItems;
-        this.totalPages = totalPages;
-    }
 }

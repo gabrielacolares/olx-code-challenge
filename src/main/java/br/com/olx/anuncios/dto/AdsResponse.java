@@ -2,6 +2,7 @@ package br.com.olx.anuncios.dto;
 
 import br.com.olx.anuncios.model.AdsStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
+@AllArgsConstructor
 @Schema(description = "Anuncio retornado pela API")
 public class AdsResponse {
     private final UUID id;
@@ -19,16 +21,4 @@ public class AdsResponse {
     private final List<String> images;
     private final AdsStatus status;
     private final String rejectionReason;
-
-    public AdsResponse(UUID id, String title, String description, BigDecimal price, String category,
-                       List<String> images, AdsStatus status, String rejectionReason) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.category = category;
-        this.images = List.copyOf(images);
-        this.status = status;
-        this.rejectionReason = rejectionReason;
-    }
 }
