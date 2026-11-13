@@ -65,38 +65,41 @@ public class ModerationClient {
     }
 
     private void logFailure(UUID adsId, Exception exception, long startedAt) {
-        if (exception instanceof RequestNotPermitted) {
-            log.error(
-                    "operation=moderation adId={} outcome=rate_limiter_timeout durationMs={}",
-                    adsId,
-                    elapsedMillis(startedAt));
-        } else if (exception instanceof RestClientResponseException responseException) {
-            int status = responseException.getStatusCode().value();
-            if (status == 429) {
+        switch (exception) {
+            case RequestNotPermitted ignored ->
+                log.error(
+                        "operation=moderation adId={} outcome=rate_limiter_timeout durationMs={}",
+                        adsId,
+                        elapsedMillis(startedAt));
+
+            case RestClientResponseException responseException
+            when responseException.getStatusCode().value() == 429 ->
                 log.error(
                         "operation=moderation adId={} outcome=retries_exhausted status=429 durationMs={}",
                         adsId,
                         elapsedMillis(startedAt));
-            } else {
+
+            case RestClientResponseException responseException ->
                 log.error(
                         "operation=moderation adId={} outcome=upstream_http_failure status={} durationMs={} exceptionType={}",
                         adsId,
-                        status,
+                        responseException.getStatusCode().value(),
                         elapsedMillis(startedAt),
                         exception.getClass().getSimpleName());
-            }
-        } else if (exception instanceof RestClientException) {
-            log.error(
-                    "operation=moderation adId={} outcome=communication_failure durationMs={} exceptionType={}",
-                    adsId,
-                    elapsedMillis(startedAt),
-                    exception.getClass().getSimpleName());
-        } else {
-            log.error(
-                    "operation=moderation adId={} outcome=unexpected_failure durationMs={} exceptionType={}",
-                    adsId,
-                    elapsedMillis(startedAt),
-                    exception.getClass().getSimpleName());
+
+            case RestClientException ignored ->
+                log.error(
+                        "operation=moderation adId={} outcome=communication_failure durationMs={} exceptionType={}",
+                        adsId,
+                        elapsedMillis(startedAt),
+                        exception.getClass().getSimpleName());
+
+            default ->
+                log.error(
+                        "operation=moderation adId={} outcome=unexpected_failure durationMs={} exceptionType={}",
+                        adsId,
+                        elapsedMillis(startedAt),
+                        exception.getClass().getSimpleName());
         }
     }
 
